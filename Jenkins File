@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    
+    tools{
+        maven 'M2_HOME'
+    }
+
+    stages {
+        stage('git clone') {
+            steps {
+                git branch: 'main', credentialsId: '98da43f6-e8f7-4da3-82a7-d009b8949502', url: 'https://github.com/Repalleboyanaresh/DevOps-Project.git'
+            }
+        }
+        stage('compile'){
+            steps{
+                sh "mvn compile"
+            }
+        }
+         stage('test'){
+            steps{
+                sh "mvn test"
+            }
+        }
+        stage('Build'){
+            steps{
+                sh "mvn package"
+            }
+        }
+        stage('deploy to tomcat server'){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: '5bd993fa-ff3d-4f1b-a026-f37f7ffce70b', path: '', url: 'http://3.108.237.233:8080/')], contextPath: 'keshava', war: '**/*.war'
+            }
+        }
+        
+    }
+}
